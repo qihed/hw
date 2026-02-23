@@ -1,0 +1,23 @@
+@use '../../styles/variables' as *;
+
+.mainContent {
+  padding: 0 16px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @include sm {
+    padding: 0 24px;
+  }
+
+  @include md {
+    padding: 0 40px;
+  }
+
+  @include lg {
+    padding: 0 80px;
+  }
+
+  @include xl {
+    padding: 0 100px;
+  }
+}
