@@ -1,0 +1,34 @@
+@use 'styles/variables' as *;
+
+.mddFrame {
+  width: 100%;
+  height: auto;
+  background-color: $brand-white;
+  margin-top: $space-xxs;
+}
+
+.mddFrameItem {
+  display: flex;
+  justify-self: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  background-color: $brand-white;
+  padding: $space-s $space-xs;
+  height: 52px;
+}
+
+.noCheckbox {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+
+  &:checked {
+    color: $brand;
+  }
+}
+
+.borderStyle {
+  /* стили для обводки инпута в дропдауне при необходимости */
+}

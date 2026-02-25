@@ -1,4 +1,6 @@
-﻿import React from 'react';
+import React from 'react';
+import cn from 'classnames';
+import styles from 'components/Loader.module.scss';
 
 export type LoaderProps = {
   /** Size */
@@ -9,7 +11,7 @@ export type LoaderProps = {
 
 const Loader: React.FC<LoaderProps> = ({ size = 'l', className }) => {
   return (
-    <div className={['loader-green', className].filter(Boolean).join(' ')}>
+    <div className={cn(styles.loaderGreen, className)}>
       {size === 's' && (
         <svg
           width="24"

@@ -1,18 +1,18 @@
-import Button from '../../../../components/Button';
-import Text from '../../../../components/Text';
-import styles from './Item.module.scss';
-import type { Product } from '../../../../api/types';
-import { getProductImageUrl } from '../../../../api/products';
+import Button from 'components/Button';
+import Text from 'components/Text';
+import styles from 'pages/ProductDetails.module.scss';
+import type { Product } from 'api/types';
+import { getProductImageUrl } from 'api/products';
 
 const PLACEHOLDER_IMAGE = 'https://placehold.co/600x600';
 
-export type ItemProps = {
+export type ProductDetails = {
   product: Product | null;
   loading?: boolean;
   error?: Error | null;
 };
 
-const Item = ({ product, loading = false, error = null }: ItemProps) => {
+const ProductDetails = ({ product, loading = false, error = null }: ProductDetails) => {
   if (error) {
     return (
       <div className={styles.container}>
@@ -65,4 +65,4 @@ const Item = ({ product, loading = false, error = null }: ItemProps) => {
   );
 };
 
-export default Item;
+export default ProductDetails;

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { getProduct, getProducts } from "./products";
-import type { Product } from "./types";
+import { useState, useEffect } from 'react';
+import { getProduct, getProducts } from 'api/products';
+import type { Product } from 'api/types';
 
 export function useProducts(page = 1, pageSize = 25) {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,9 +11,10 @@ export function useProducts(page = 1, pageSize = 25) {
   useEffect(() => {
     let cancelled = false;
     queueMicrotask(() => setLoading(true));
-    getProducts({ page, pageSize, populate: ["images", "productCategory"] })
+    getProducts({ page, pageSize, populate: ['images', 'productCategory'] })
       .then((res) => {
         if (cancelled) return;
+        setError(null);
         setProducts(res.data);
         setTotal(res.meta.pagination.total);
       })
@@ -37,8 +38,9 @@ export function useProduct(id: number | string | null | undefined) {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (id === null || id === undefined || id === "") {
+    if (id === null || id === undefined || id === '') {
       queueMicrotask(() => {
+        setError(null);
         setLoading(false);
         setProduct(null);
       });
@@ -46,9 +48,12 @@ export function useProduct(id: number | string | null | undefined) {
     }
     let cancelled = false;
     queueMicrotask(() => setLoading(true));
-    getProduct(id, { populate: ["images", "productCategory"] })
+    getProduct(id, { populate: ['images', 'productCategory'] })
       .then((res) => {
-        if (!cancelled) setProduct(res.data);
+        if (!cancelled) {
+          setError(null);
+          setProduct(res.data);
+        }
       })
       .catch((err) => {
         if (!cancelled) setError(err);

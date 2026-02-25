@@ -1,10 +1,8 @@
 import React from 'react';
 import cn from 'classnames';
+import styles from 'components/Input.module.scss';
 
-export type InputProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  'onChange' | 'value'
-> & {
+export type InputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> & {
   /** Значение поля */
   value: string;
   /** Callback, вызываемый при вводе данных в поле */
@@ -16,16 +14,16 @@ export type InputProps = Omit<
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ value, onChange, afterSlot, className, ...rest }, ref) => {
     return (
-      <div className={cn('input-wrapper', className)}>
+      <div className={cn(styles.inputWrapper, className)}>
         <input
           ref={ref}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           {...rest}
-          className={cn('input', className)}
+          className={styles.input}
         />
-        {afterSlot && <div className="input-afterSlot">{afterSlot}</div>}
+        {afterSlot && <div className={styles.inputAfterSlot}>{afterSlot}</div>}
       </div>
     );
   }

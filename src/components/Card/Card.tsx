@@ -1,5 +1,7 @@
-﻿import React from 'react';
-import Text from '../Text';
+import React from 'react';
+import Text from 'components/Text';
+import cn from 'classnames';
+import styles from 'components/Card.module.scss';
 
 export type CardProps = {
   /** Дополнительный classname */
@@ -31,36 +33,33 @@ const Card: React.FC<CardProps> = ({
   onClick,
 }) => {
   return (
-    <div
-    className={['card', className].filter(Boolean).join(' ')}
-      onClick={onClick}
-    >
-      <div className="img-placehold">
-        <img src={image} alt="товар" className="img-card" />
+    <div className={cn(styles.card, className)} onClick={onClick}>
+      <div className={styles.imgPlacehold}>
+        <img src={image} alt="товар" className={styles.imgCard} />
       </div>
-      <div className="card-body">
+      <div className={styles.cardBody}>
         {captionSlot && (
-          <Text tag="p" className="card-captionSlot" maxLines={2}>
+          <Text tag="p" className={styles.cardCaptionSlot} maxLines={2}>
             {captionSlot}
           </Text>
         )}
-        <Text tag="h3" className="card-title" maxLines={2}>
+        <Text tag="h3" className={styles.cardTitle} maxLines={2}>
           {title}
         </Text>
-        <Text tag="p" className="card-subtitle" maxLines={3}>
+        <Text tag="p" className={styles.cardSubtitle} maxLines={3}>
           {subtitle}
         </Text>
       </div>
       {(contentSlot || actionSlot) && (
-        <div className="card-footer">
+        <div className={styles.cardFooter}>
           {contentSlot && (
-            <div className="card-contentSlot">
-              <Text tag="h3" className="card-contentSlot" maxLines={1}>
+            <div className={styles.cardContentSlot}>
+              <Text tag="h3" className={styles.cardContentSlot} maxLines={1}>
                 {contentSlot}
               </Text>
             </div>
           )}
-          {actionSlot && <div className="card-actionSlot">{actionSlot}</div>}
+          {actionSlot && <div className={styles.cardActionSlot}>{actionSlot}</div>}
         </div>
       )}
     </div>

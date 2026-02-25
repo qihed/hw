@@ -1,5 +1,5 @@
-import Text from '../../../../components/Text';
-import styles from './Description.module.scss';
+import Text from 'components/Text';
+import styles from 'pages/ProductsPage/components/Description.module.scss';
 
 const Description = () => {
   return (

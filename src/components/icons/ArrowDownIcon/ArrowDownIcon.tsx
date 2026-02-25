@@ -1,5 +1,7 @@
 import * as React from 'react';
-import type { IconProps } from '../Icon';
+import cn from 'classnames';
+import type { IconProps } from 'components/icons/Icon';
+import styles from 'components/icons/Icon/Icon.module.scss';
 
 const ArrowDownIcon: React.FC<IconProps> = ({
   className,
@@ -8,6 +10,12 @@ const ArrowDownIcon: React.FC<IconProps> = ({
   height = 24,
   ...rest
 }) => {
+  const COLOR_STYLE_MAP: Record<NonNullable<IconProps['color']>, string> = {
+    primary: styles.iconPrimary,
+    secondary: styles.iconSecondary,
+    accent: styles.iconAccent,
+  };
+
   return (
     <svg
       {...rest}
@@ -16,7 +24,7 @@ const ArrowDownIcon: React.FC<IconProps> = ({
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={`icon ${color ? `icon-${color}` : ''} ${className ?? ''}`.trim()}
+      className={cn(styles.icon, color && COLOR_STYLE_MAP[color], className)}
     >
       <path
         fillRule="evenodd"

@@ -1,10 +1,8 @@
-import './App.css';
-import '../styles/index.css';
 import { Outlet } from 'react-router';
 
 const App = () => {
   return (
-    <div className="app">
+    <div>
       <Outlet />
     </div>
   );

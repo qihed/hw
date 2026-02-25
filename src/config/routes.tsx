@@ -1,7 +1,7 @@
 import type { RouteObject } from 'react-router';
-import App from '../pages/App.tsx';
-import ProductsPage from '../pages/ProductsPage';
-import ItemPage from '../pages/ItemPage';
+import App from 'pages/App';
+import ProductsPage from 'pages/ProductsPage';
+import ItemPage from 'pages/ProductPage';
 import { Navigate } from 'react-router';
 
 export const routesConfig: RouteObject[] = [

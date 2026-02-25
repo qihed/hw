@@ -1,6 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
-import Loader from '../Loader'
+import styles from 'components/Button.module.scss';
+import Loader from 'components/Loader';
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Состояние загрузки */
@@ -17,7 +18,14 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   ...rest
 }) => {
-  const isDisabled = Boolean(disabled || loading );
+  const isDisabled = Boolean(disabled || loading);
+
+  const classNames = cn(
+    styles.textButton,
+    styles.button,
+    { [styles.buttonLoading]: loading },
+    className
+  );
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (loading || disabled) {
@@ -30,19 +38,8 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   return (
-    <button
-      {...rest}
-      disabled={isDisabled}
-      onClick={handleClick}
-      className={cn(
-        'text-button',
-        'button',
-        {'button-disabled': (loading && disabled) || disabled},
-        { 'button--loading': loading },
-        className
-      )}
-    >
-      {loading && <Loader className="loader-white" size="s" />}
+    <button {...rest} disabled={isDisabled} onClick={handleClick} className={classNames}>
+      {loading && <Loader className={styles.loaderWhite} size="s" />}
       {children}
     </button>
   );

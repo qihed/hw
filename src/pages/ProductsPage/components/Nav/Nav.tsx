@@ -1,7 +1,8 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router';
-import styles from './Nav.module.scss';
-import Text from '../../../../components/Text';
-import rightArrow from '../../../../assets/right-arrow.png';
+import styles from 'pages/ProductsPage/components/Nav.module.scss';
+import Text from 'components/Text';
+import rightArrow from 'assets/right-arrow.png';
 
 function getPageUrl(page: number): string {
   return `/products?page=${page}`;
@@ -13,14 +14,16 @@ export type NavProps = {
 };
 
 const Nav = ({ currentPage, pageCount }: NavProps) => {
-
   const prevPage = Math.max(1, currentPage - 1);
   const nextPage = Math.min(pageCount, currentPage + 1);
 
-  const pages: number[] = [];
-  for (let i = 1; i <= pageCount; i++) {
-    pages.push(i);
-  }
+  const pages = useMemo(() => {
+    const result: number[] = [];
+    for (let i = 1; i <= pageCount; i++) {
+      result.push(i);
+    }
+    return result;
+  }, [pageCount]);
 
   return (
     <div className={styles.container}>
@@ -29,11 +32,7 @@ const Nav = ({ currentPage, pageCount }: NavProps) => {
         className={currentPage <= 1 ? styles.disabled : undefined}
         aria-disabled={currentPage <= 1}
       >
-        <img
-          className={`${styles.start} ${styles.block}`}
-          src={rightArrow}
-          alt="РЅР°Р·Р°Рґ"
-        />
+        <img className={`${styles.start} ${styles.block}`} src={rightArrow} alt="страница" />
       </Link>
       {pages.map((page) => (
         <Link
@@ -42,11 +41,7 @@ const Nav = ({ currentPage, pageCount }: NavProps) => {
           className={page === currentPage ? styles.linkActive : styles.link}
         >
           <Text
-            className={
-              page === currentPage
-                ? `${styles.text} ${styles.textAccent}`
-                : styles.text
-            }
+            className={page === currentPage ? `${styles.text} ${styles.textAccent}` : styles.text}
           >
             {page}
           </Text>
@@ -57,11 +52,10 @@ const Nav = ({ currentPage, pageCount }: NavProps) => {
         className={currentPage >= pageCount ? styles.disabled : undefined}
         aria-disabled={currentPage >= pageCount}
       >
-        <img src={rightArrow} alt="РІРїРµСЂС‘Рґ" />
+        <img src={rightArrow} alt="страница" />
       </Link>
     </div>
   );
 };
 
 export default Nav;
-

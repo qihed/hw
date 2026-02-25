@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
-import '../../styles/index.css';
 import { useSearchParams } from 'react-router';
-import { useProducts } from '../../api/useProducts';
-import Description from './components/Description/Description';
-import TechInfo from './components/TechInfo/TechInfo';
-import Field from './components/Field/Field';
-import Nav from './components/Nav/Nav';
-import Header from './components/Header/Header';
-import styles from './ProductsPage.module.scss';
+import { useProducts } from 'api/useProducts';
+
+import styles from 'pages/ProductsPage.module.scss';
+import 'styles/index.css'; /* не импортировать css */
+import Description from 'pages/ProductsPage/components/Description';
+import TechInfo from 'pages/ProductsPage/components/TechInfo';
+import ProductCardList from 'components/ProductCardList';
+import Nav from 'pages/ProductsPage/components/Nav';
+import Header from 'components/Header';
 
 const PAGE_SIZE = 24;
 
@@ -16,10 +17,7 @@ const ProductsPage = () => {
   const pageParam = searchParams.get('page');
   const pageNumber = Math.max(1, parseInt(pageParam || '1', 10) || 1);
 
-  const { products, total, loading, error } = useProducts(
-    pageNumber,
-    PAGE_SIZE,
-  );
+  const { products, total, loading, error } = useProducts(pageNumber, PAGE_SIZE);
   const pageCount = total > 0 ? Math.ceil(total / PAGE_SIZE) : 1;
   const currentPage = Math.min(pageNumber, pageCount);
 
@@ -34,7 +32,7 @@ const ProductsPage = () => {
         <Description />
         <TechInfo total={total} loading={loading} />
         <div className={styles.mainContent}>
-          <Field products={products} loading={loading} error={error} />
+          <ProductCardList products={products} loading={loading} error={error} />
         </div>
         <Nav currentPage={currentPage} pageCount={pageCount} />
       </main>

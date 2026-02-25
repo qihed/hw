@@ -1,5 +1,4 @@
-
-export interface StrapiImage {
+export type StrapiImage = {
   id: number;
   documentId: string;
   name: string;
@@ -14,17 +13,17 @@ export interface StrapiImage {
   ext: string;
   mime: string;
   size: number;
-}
+};
 
-export interface ProductCategory {
+export type ProductCategory = {
   id: number;
   documentId: string;
   name?: string;
   slug?: string;
   [key: string]: unknown;
-}
+};
 
-export interface Product {
+export type Product = {
   id: number;
   documentId: string;
   title: string;
@@ -36,22 +35,22 @@ export interface Product {
   images?: StrapiImage[] | { data: StrapiImage[] };
   productCategory?: ProductCategory | { data: ProductCategory };
   [key: string]: unknown;
-}
+};
 
-export interface PaginationMeta {
+export type PaginationMeta = {
   page: number;
   pageSize: number;
   pageCount: number;
   total: number;
-}
+};
 
-export interface ProductsResponse {
+export type ProductsResponse = {
   data: Product[];
   meta: {
     pagination: PaginationMeta;
   };
-}
+};
 
-export interface ProductResponse {
+export type ProductResponse = {
   data: Product;
-}
+};

@@ -1,14 +1,15 @@
 import { useParams, Link } from 'react-router';
-import styles from './ItemPage.module.scss';
-import Text from '../../components/Text';
-import Item from './components/Item';
-import Field from '../ProductsPage/components/Field';
-import Header from '../ProductsPage/components/Header/Header';
-import { useProduct } from '../../api/useProducts';
-import { useProducts } from '../../api/useProducts';
-import rightArrow from '../../assets/right-arrow.png';
+import { useProduct } from 'api/useProducts';
+import { useProducts } from 'api/useProducts';
 
-const ItemPage = () => {
+import styles from 'pages/ProductPage.module.scss';
+import rightArrow from 'assets/right-arrow.png';
+import Text from 'components/Text';
+import Item from 'pages/ProductPage/components/ProductDetails';
+import ProductCardList from 'components/ProductCardList';
+import Header from 'components/Header';
+
+const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
   const { product, loading, error } = useProduct(id);
   const { products, loading: productsLoading, error: productsError } = useProducts(1, 3);
@@ -24,11 +25,11 @@ const ItemPage = () => {
         <Item product={product} loading={loading} error={error} />
         <Text className={styles.text}>Total products</Text>
         <div className={styles.field}>
-          <Field products={products} loading={productsLoading} error={productsError} />
+          <ProductCardList products={products} loading={productsLoading} error={productsError} />
         </div>
       </div>
     </>
   );
 };
 
-export default ItemPage;
+export default ProductPage;

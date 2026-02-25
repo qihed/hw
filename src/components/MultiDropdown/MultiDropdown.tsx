@@ -1,6 +1,7 @@
 import React from 'react';
-import Input from '../Input';
-import ArrowDownIcon from '../icons/ArrowDownIcon';
+import Input from 'components/Input';
+import ArrowDownIcon from 'components/icons/ArrowDownIcon';
+import styles from 'components/MultiDropdown.module.scss';
 
 export type Option = {
   /** Ключ варианта, используется для отправки на бек/использования в коде */
@@ -57,9 +58,7 @@ const MultiDropdown: React.FC<MultiDropdownProps> = ({
     }
   };
 
-  const filtered = options.filter((o) =>
-    o.value.toLowerCase().includes(query.toLowerCase())
-  );
+  const filtered = options.filter((o) => o.value.toLowerCase().includes(query.toLowerCase()));
 
   const title = getTitle(value);
   const inputValue = isOpen ? query : value.length ? title : '';
@@ -68,8 +67,8 @@ const MultiDropdown: React.FC<MultiDropdownProps> = ({
     <div className={className} ref={rootRef}>
       <Input
         value={inputValue}
-        afterSlot={<ArrowDownIcon color="secondary"/>}
-        className='border-style'
+        afterSlot={<ArrowDownIcon color="secondary" />}
+        className={styles.borderStyle}
         onChange={(val) => {
           setQuery(val);
           if (!isOpen) setIsOpen(true);
@@ -80,14 +79,15 @@ const MultiDropdown: React.FC<MultiDropdownProps> = ({
       />
 
       {isOpen && !disabled && (
-        <div className="mdd-frame">
+        <div className={styles.mddFrame}>
           {filtered.map((opt) => (
-            <div
-              className="mdd-frame-item"
-              key={opt.key}
-              onClick={() => toggleOption(opt)}
-            >
-              <input className='noCheckbox' type="checkbox" readOnly checked={isSelected(opt)} />
+            <div className={styles.mddFrameItem} key={opt.key} onClick={() => toggleOption(opt)}>
+              <input
+                className={styles.noCheckbox}
+                type="checkbox"
+                readOnly
+                checked={isSelected(opt)}
+              />
               <span>{opt.value}</span>
             </div>
           ))}

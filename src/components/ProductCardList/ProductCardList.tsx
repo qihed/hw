@@ -1,23 +1,20 @@
 import { Link } from 'react-router';
-import styles from './Field.module.scss';
-import Card from '../../../../components/Card';
-import Button from '../../../../components/Button';
-import type { Product } from '../../../../api/types';
-import {
-  getProductImageUrl,
-  getProductCategoryName,
-} from '../../../../api/products';
+import styles from 'components/ProductCardList.module.scss';
+import Card from 'components/Card';
+import Button from 'components/Button';
+import type { Product } from 'api/types';
+import { getProductImageUrl, getProductCategoryName } from 'api/products';
 
 const PLACEHOLDER_IMAGE =
   'https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg';
 
-export type FieldProps = {
+export type ProductCardListProps = {
   products: Product[];
   loading?: boolean;
   error?: Error | null;
 };
 
-const Field = ({ products, loading = false, error = null }: FieldProps) => {
+const ProductCardList = ({ products, loading = false, error = null }: ProductCardListProps) => {
   if (error) {
     return (
       <div className={styles.container}>
@@ -38,17 +35,13 @@ const Field = ({ products, loading = false, error = null }: FieldProps) => {
     <div className={styles.container}>
       {products.map((product) => (
         <Link
-          key={product.documentId ?? product.id}
-          to={`/products/${product.documentId ?? product.id}`}
+          key={product.documentId}
+          to={`/products/${product.documentId}`}
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
           <Card
-            image={getProductImageUrl(product) ?? PLACEHOLDER_IMAGE}
-            captionSlot={
-              getProductCategoryName(product) ? (
-                getProductCategoryName(product)
-              ) : null
-            }
+            image={getProductImageUrl(product) || PLACEHOLDER_IMAGE}
+            captionSlot={getProductCategoryName(product) || null}
             title={product.title}
             subtitle={product.description || '—'}
             contentSlot={<>{product.price}₽</>}
@@ -60,4 +53,4 @@ const Field = ({ products, loading = false, error = null }: FieldProps) => {
   );
 };
 
-export default Field;
+export default ProductCardList;
