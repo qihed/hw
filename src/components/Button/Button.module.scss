@@ -23,11 +23,11 @@
     &:hover {background-color: $brand-disabled;}
   }
 
-  .buttonLoading:hover {
+  &.buttonLoading:hover {
     background-color: $brand;
   }
 
-  .textButton {
+  &.textButton {
     font-family: 'Roboto', sans-serif;
     color: $brand-white;
     font-size: 18px;

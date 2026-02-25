@@ -5,64 +5,64 @@
   white-space: normal;
   overflow-wrap: break-word;
 
-  .textViewButton {
+  &.textViewButton {
     font-size: 18px;
     font-style: normal;
   }
 
-  .textViewTitle {
+  &.textViewTitle {
     font-size: 44px;
     font-weight: 700;
     font-style: bold;
   }
 
-  .textViewP20 {
+  &.textViewP20 {
     font-size: 20px;
   }
 
-  .textViewP18 {
+  &.textViewP18 {
     font-family: 'Roboto', sans-serif;
     font-size: 18px;
     font-weight: 400;
     font-style: normal;
   }
 
-  .textViewP16 {
+  &.textViewP16 {
     font-size: 16px;
   }
 
-  .textViewP14 {
+  &.textViewP14 {
     font-size: 14px;
   }
 
-  .textNormal {
+  &.textNormal {
     font-weight: 400;
     font-style: normal;
   }
 
-  .textMedium {
+  &.textMedium {
     font-weight: 500;
     font-style: medium;
   }
 
-  .textBold {
+  &.textBold {
     font-weight: 700;
     font-style: bold;
   }
 
-  .textColorPrimary {
+  &.textColorPrimary {
     color: #000000;
   }
 
-  .textColorSecondary {
+  &.textColorSecondary {
     color: #afadb5;
   }
 
-  .textColorAccent {
+  &.textColorAccent {
     color: #518581;
   }
 
-  .textСlamp {
+  &.textClamp {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: var(--text-lines, 1);

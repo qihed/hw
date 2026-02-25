@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
 import { useProducts } from 'api/useProducts';
 
-import styles from 'pages/ProductsPage.module.scss';
-import 'styles/index.css'; /* не импортировать css */
+import styles from 'pages/ProductsPage/ProductsPage.module.scss';
+import 'styles/index.scss';
 import Description from 'pages/ProductsPage/components/Description';
 import TechInfo from 'pages/ProductsPage/components/TechInfo';
 import ProductCardList from 'components/ProductCardList';

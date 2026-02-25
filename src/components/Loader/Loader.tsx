@@ -1,6 +1,6 @@
 import React from 'react';
 import cn from 'classnames';
-import styles from 'components/Loader.module.scss';
+import styles from 'components/Loader/Loader.module.scss';
 
 export type LoaderProps = {
   /** Size */

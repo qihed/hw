@@ -4,15 +4,15 @@
   width: var(--w-icon);
   height: var(--h-icon);
 
-  .iconPrimary {
+  &.iconPrimary {
     color: #000000;
   }
 
-  .iconSecondary {
+  &.iconSecondary {
     color: #afadb5;
   }
 
-  .iconAccent {
+  &.iconAccent {
     color: #518581;
   }
 }

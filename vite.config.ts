@@ -9,15 +9,15 @@ import tsconfig from './tsconfig.json';
 const SRC_PATH = path.resolve(__dirname, 'src');
 
 const parseTsConfigPaths = (paths: Record<string, string[]>): Record<string, string> => {
-  const webpackConfigAliases: Record<string, string> = {};
+  const aliasMap: Record<string, string> = {};
 
-  Object.entries(paths).forEach(([alias, paths]) => {
-    const aliasPath = paths[0].replace(/[^a-zA-Z]/g, '');
-
-    webpackConfigAliases[alias] = path.join(SRC_PATH, aliasPath);
+  Object.entries(paths).forEach(([aliasKey, [pathValue]]) => {
+    const prefix = aliasKey.replace(/\/\*$/, '');
+    const dir = pathValue.replace(/[^a-zA-Z]/g, '');
+    aliasMap[prefix] = path.join(SRC_PATH, dir);
   });
 
-  return webpackConfigAliases;
+  return aliasMap;
 };
 export default defineConfig({
   plugins: [react()],

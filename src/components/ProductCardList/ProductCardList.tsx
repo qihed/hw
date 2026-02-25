@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import styles from 'components/ProductCardList.module.scss';
+import styles from 'components/ProductCardList/ProductCardList.module.scss';
 import Card from 'components/Card';
 import Button from 'components/Button';
 import type { Product } from 'api/types';
@@ -37,6 +37,7 @@ const ProductCardList = ({ products, loading = false, error = null }: ProductCar
         <Link
           key={product.documentId}
           to={`/products/${product.documentId}`}
+          className={styles.cardLink}
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
           <Card

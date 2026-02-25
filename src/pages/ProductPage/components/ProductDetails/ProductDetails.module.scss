@@ -104,8 +104,11 @@
 
 .btnCart {
   background-color: #ffffff;
-  color: black;
   border: 1px solid #afadb5;
+
+  &.btnCart {
+    color: black;
+  }
 }
 
 .btnCart:hover {

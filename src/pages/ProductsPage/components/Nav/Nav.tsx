@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router';
-import styles from 'pages/ProductsPage/components/Nav.module.scss';
+import styles from 'pages/ProductsPage/components/Nav/Nav.module.scss';
 import Text from 'components/Text';
 import rightArrow from 'assets/right-arrow.png';
 

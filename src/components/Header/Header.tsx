@@ -1,5 +1,5 @@
 import Text from 'components/Text';
-import styles from 'components/Header.module.scss';
+import styles from 'components/Header/Header.module.scss';
 import logo from 'assets/logo.png';
 import bag from 'assets/bag-2.png';
 import user from 'assets/user.png';
