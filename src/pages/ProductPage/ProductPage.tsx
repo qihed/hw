@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router';
 import { useProduct } from 'api/useProducts';
 import { useProducts } from 'api/useProducts';
 
-import styles from 'pages/ProductPage.module.scss';
+import styles from 'pages/ProductPage/ProductPage.module.scss';
 import rightArrow from 'assets/right-arrow.png';
 import Text from 'components/Text';
 import Item from 'pages/ProductPage/components/ProductDetails';

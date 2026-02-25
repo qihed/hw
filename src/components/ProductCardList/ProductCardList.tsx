@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import styles from 'components/ProductCardList.module.scss';
+import styles from 'components/ProductCardList/ProductCardList.module.scss';
 import Card from 'components/Card';
 import Button from 'components/Button';
 import type { Product } from 'api/types';

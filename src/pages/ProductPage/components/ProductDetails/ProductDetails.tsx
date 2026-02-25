@@ -1,6 +1,6 @@
 import Button from 'components/Button';
 import Text from 'components/Text';
-import styles from 'pages/ProductDetails.module.scss';
+import styles from 'pages/ProductPage/components/ProductDetails/ProductDetails.module.scss';
 import type { Product } from 'api/types';
 import { getProductImageUrl } from 'api/products';
 
