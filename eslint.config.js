@@ -59,7 +59,7 @@ export default tseslint.config(
       'prettier/prettier': 'error',
       'no-console': 'error',
       'linebreak-style': ['error', 'unix'],
-      'import/order': 'off', 
+      'import/order': 'off', // eslint-plugin-import: getTokenOrCommentBefore несовместим с ESLint 10
       'react/jsx-uses-react': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
