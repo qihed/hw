@@ -1,46 +1,32 @@
 import { makeAutoObservable, reaction } from 'mobx';
 import type { CartItem } from 'api/types';
+import { CART_KEY } from 'config/storage';
+import { LocalStorageModel } from 'store/LocalStorageModel';
+import { ListByIdModel } from 'store/ListByIdModel';
 
-const CART_KEY = 'cart';
-
-function readFromStorage(): CartItem[] {
-  try {
-    const data = localStorage.getItem(CART_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeToStorage(items: CartItem[]) {
-  try {
-    localStorage.setItem(CART_KEY, JSON.stringify(items));
-  } catch {
-    // ignore
-  }
-}
+const getCartItemId = (item: CartItem) => item.productId;
 
 export class CartStore {
   items: CartItem[] = [];
 
   constructor() {
     makeAutoObservable(this);
-    this.items = readFromStorage();
+    this.items = LocalStorageModel.getItemJson(CART_KEY, []);
     reaction(
       () => this.items,
-      (items) => writeToStorage(items),
+      (items) => LocalStorageModel.setItemJson(CART_KEY, items),
       { fireImmediately: false }
     );
   }
 
   addItem(productId: string, quantity = 1) {
-    const existing = this.items.find((item) => item.productId === productId);
+    const existing = ListByIdModel.getById(this.items, getCartItemId, productId);
     const currentQty = existing?.quantity ?? 0;
     this.setQuantity(productId, currentQty + quantity);
   }
 
   removeItem(productId: string) {
-    this.items = this.items.filter((item) => item.productId !== productId);
+    this.items = ListByIdModel.removeById(this.items, getCartItemId, productId);
   }
 
   setQuantity(productId: string, quantity: number) {
@@ -48,7 +34,7 @@ export class CartStore {
       this.removeItem(productId);
       return;
     }
-    const index = this.items.findIndex((item) => item.productId === productId);
+    const index = ListByIdModel.getIndexById(this.items, getCartItemId, productId);
     if (index >= 0) {
       this.items = this.items.map((item, i) =>
         i === index ? { ...item, productId, quantity } : item
@@ -67,9 +53,7 @@ export class CartStore {
   }
 
   getQuantity(productId: string): number {
-    const item = this.items.find((i) => i.productId === productId);
+    const item = ListByIdModel.getById(this.items, getCartItemId, productId);
     return item?.quantity ?? 0;
   }
 }
-
-export const cartStore = new CartStore();

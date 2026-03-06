@@ -51,6 +51,7 @@
 .cardCaptionSlot {
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
+  line-height: 1.4;
   color: $font-hover;
   font-weight: 500;
   font-style: medium;
@@ -60,11 +61,13 @@
   font-family: 'Roboto', sans-serif;
   font-size: 20px;
   font-weight: 500;
+  line-height: 1.35;
 }
 
 .cardSubtitle {
   font-family: 'Roboto', sans-serif;
   font-size: 16px;
+  line-height: 1.5;
   color: $font-hover;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -78,20 +81,21 @@
   font-size: 18px;
   font-weight: 700;
   font-style: bold;
+  line-height: 1.3;
 }
 
 .cardBody {
   display: flex;
   flex-direction: column;
-  gap: $space-xxs;
-  padding: $space-xl $space-xs $space-l $space-xs;
+  gap: $space-s;
+  padding: $space-xl $space-s $space-l $space-s;
 }
 
 .cardFooter {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0px $space-xs $space-xl $space-xs;
+  padding: $space-m $space-s $space-xl $space-s;
 }
 
 .cardActionSlot {

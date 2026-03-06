@@ -9,7 +9,7 @@ import SkeletonCard from 'components/Skeleton';
 import Text from 'components/Text';
 import Nav from 'pages/ProductsPage/components/Nav';
 import Header from 'components/Header';
-import { catalogStore } from 'store/CatalogStore';
+import { useStore } from 'store/StoreContext';
 import { observer } from 'mobx-react-lite';
 
 function parseCategoryIds(param: string | null): number[] {
@@ -21,7 +21,7 @@ function parseCategoryIds(param: string | null): number[] {
 }
 
 const ProductsPage = () => {
-  // берём query-параметры из url и передаем в CatalogStore.loadProducts
+  const { catalog } = useStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const pageParam = searchParams.get('page');
   const searchQuery = searchParams.get('search') ?? '';
@@ -29,96 +29,98 @@ const ProductsPage = () => {
   const pageNumber = Math.max(1, parseInt(pageParam || '1', 10) || 1);
 
   const categoryIds = useMemo(() => parseCategoryIds(categoryParam), [categoryParam]);
-
-  //вызываем при монтировании, чтобы получить список категорий
-  useEffect(() => {
-    catalogStore.loadCategories();
-  }, []);
+  const isPageOutOfRange =
+    !catalog.loadingProducts && catalog.pageCount > 0 && pageNumber > catalog.pageCount;
 
   useEffect(() => {
-    catalogStore.loadProducts({
+    catalog.loadCategories();
+  }, [catalog]);
+
+  useEffect(() => {
+    catalog.loadProducts({
       page: pageNumber,
       search: searchQuery,
       categoryIds,
     });
-  }, [pageNumber, searchQuery, categoryIds]);
+  }, [catalog, pageNumber, searchQuery, categoryIds]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pageParam]);
-  //все костыли нижк по написанию длинных функций в пропсах уберу к некст дз
-  //выбрал оставить url источников правды. интересно твоё мнение насколько это правильно
-  //и если нет, то как получать и обрабатывать query-параметры в сторе
+
+  const applySearchParams = (updater: (next: URLSearchParams) => void) => {
+    const next = new URLSearchParams(searchParams);
+    updater(next);
+    next.set('page', '1');
+    setSearchParams(next);
+  };
+
+  const handleSearchSubmit = (value: string) => {
+    applySearchParams((next) => {
+      if (value.trim()) next.set('search', value.trim());
+      else next.delete('search');
+    });
+  };
+
+  const handleCategoryChange = (ids: number[]) => {
+    applySearchParams((next) => {
+      if (ids.length) next.set('category', ids.join(','));
+      else next.delete('category');
+    });
+  };
+
+  const handleClearSearch = () => {
+    applySearchParams((next) => next.delete('search'));
+  };
+
+  const handleClearCategory = () => {
+    applySearchParams((next) => next.delete('category'));
+  };
+
   return (
     <>
       <Header />
-      <main>
+      <main className={styles.main}>
         <Description />
         <TechInfo
-          total={catalogStore.total}
-          loading={catalogStore.loadingProducts}
+          total={catalog.total}
+          loading={catalog.loadingProducts}
           searchValue={searchQuery}
-          onSearchSubmit={(value) => {
-            const next = new URLSearchParams(searchParams);
-            if (value.trim()) {
-              next.set('search', value.trim());
-            } else {
-              next.delete('search');
-            }
-            next.set('page', '1');
-            setSearchParams(next);
-          }}
-          categoryOptions={catalogStore.categoryOptions}
+          onSearchSubmit={handleSearchSubmit}
           selectedCategoryIds={categoryIds}
-          onCategoryChange={(ids) => {
-            const next = new URLSearchParams(searchParams);
-            if (ids.length) {
-              next.set('category', ids.join(','));
-            } else {
-              next.delete('category');
-            }
-            next.set('page', '1');
-            setSearchParams(next);
-          }}
-          onClearSearch={() => {
-            const next = new URLSearchParams(searchParams);
-            next.delete('search');
-            next.set('page', '1');
-            setSearchParams(next);
-          }}
-          onClearCategory={() => {
-            const next = new URLSearchParams(searchParams);
-            next.delete('category');
-            next.set('page', '1');
-            setSearchParams(next);
-          }}
+          onCategoryChange={handleCategoryChange}
+          onClearSearch={handleClearSearch}
+          onClearCategory={handleClearCategory}
         />
         <div className={styles.mainContent}>
-          {catalogStore.loadingProducts ? (
-            <div className={styles.skeletonList}>
-              <SkeletonCard />
-              <SkeletonCard />
+          {catalog.loadingProducts ? (
+            <div>
               <SkeletonCard />
             </div>
-          ) : catalogStore.products.length === 0 &&
-            (searchQuery.trim() || categoryIds.length > 0) ? (
+          ) : isPageOutOfRange ? (
+            <div className={styles.emptySearch}>
+              <Text view="title">Такой страницы не существует</Text>
+            </div>
+          ) : catalog.products.length === 0 && (searchQuery.trim() || categoryIds.length > 0) ? (
             <div className={styles.emptySearch}>
               <Text view="title">По выбранным фильтрам товаров не найдено</Text>
             </div>
           ) : (
             <ProductCardList
-              products={catalogStore.products}
-              loading={catalogStore.loadingProducts}
-              error={catalogStore.errorProducts}
+              products={catalog.products}
+              loading={catalog.loadingProducts}
+              error={catalog.errorProducts}
             />
           )}
         </div>
-        <Nav
-          currentPage={catalogStore.currentPage}
-          pageCount={catalogStore.pageCount}
-          searchQuery={searchQuery}
-          categoryParam={categoryParam}
-        />
+        <nav className={styles.paginationWrap} aria-label="Пагинация">
+          <Nav
+            currentPage={catalog.currentPage}
+            pageCount={catalog.pageCount}
+            searchQuery={searchQuery}
+            categoryParam={categoryParam}
+          />
+        </nav>
       </main>
     </>
   );

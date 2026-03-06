@@ -1,22 +1,19 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import Input from 'components/Input';
 import Button from 'components/Button';
 import styles from 'pages/ProductsPage/components/TechInfo/TechInfo.module.scss';
-import MultiDropdown from 'components/MultiDropdown';
+import MultiDropdown, { type Option } from 'components/MultiDropdown';
 import Text from 'components/Text';
-import type { Option } from 'components/MultiDropdown';
+import { useStore } from 'store/StoreContext';
 
 export type TechInfoProps = {
   total?: number;
   loading?: boolean;
   searchValue?: string;
   onSearchSubmit?: (value: string) => void;
-  categoryOptions?: Option[];
   selectedCategoryIds?: number[];
   onCategoryChange?: (ids: number[]) => void;
-  /** Clear только поисковую строку */
   onClearSearch?: () => void;
-  /** Clear только фильтр категорий */
   onClearCategory?: () => void;
 };
 
@@ -25,18 +22,16 @@ const TechInfo = ({
   loading = false,
   searchValue = '',
   onSearchSubmit,
-  categoryOptions = [],
   selectedCategoryIds = [],
   onCategoryChange,
   onClearSearch,
   onClearCategory,
 }: TechInfoProps) => {
-  const [searchQuery, setSearchQuery] = useState(searchValue);
+  const { catalog } = useStore();
+  const categoryOptions = catalog.categoryOptions;
+  const selectedCategoryOptions = catalog.getSelectedCategoryOptions(selectedCategoryIds);
 
-  const selectedCategoryOptions = useMemo(
-    () => categoryOptions.filter((opt) => selectedCategoryIds.includes(parseInt(opt.key, 10))),
-    [categoryOptions, selectedCategoryIds]
-  );
+  const [searchQuery, setSearchQuery] = useState(searchValue);
 
   useEffect(() => {
     setSearchQuery(searchValue);

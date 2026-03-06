@@ -64,7 +64,6 @@ export type CartItem = {
   quantity?: number;
 };
 
-//тип для будущего API
 export type Cart = {
   data: CartItem[];
 };

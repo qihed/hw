@@ -3,6 +3,7 @@ import * as React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import { routesConfig } from 'config/routes';
+import { StoreProvider } from 'store/StoreContext';
 
 import 'styles/index.scss';
 
@@ -12,6 +13,8 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLDivEleme
 
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <StoreProvider>
+      <RouterProvider router={router} />
+    </StoreProvider>
   </React.StrictMode>
 );

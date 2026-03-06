@@ -3,9 +3,7 @@ import cn from 'classnames';
 import styles from 'components/Loader/Loader.module.scss';
 
 export type LoaderProps = {
-  /** Size */
   size?: 's' | 'm' | 'l';
-  /** Extra class */
   className?: string;
 };
 

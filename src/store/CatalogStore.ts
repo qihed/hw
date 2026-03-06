@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import type { Product, ProductCategory } from 'api/types';
-import { getProduct, getProductCategories, getProducts } from 'api/products';
+import { getProductCategories, getProducts } from 'api/products';
+import { MetaModel } from 'store/MetaModel';
 
 type LoadProductsQuery = {
   page: number;
@@ -9,19 +10,12 @@ type LoadProductsQuery = {
 };
 
 export class CatalogStore {
-  // observable — то, что храним
   products: Product[] = [];
   total = 0;
-  loadingProducts = false;
-  errorProducts: Error | null = null;
+  readonly productsMeta = new MetaModel();
 
   categories: ProductCategory[] = [];
-  loadingCategory = false;
-  errorCategory: Error | null = null;
-
-  product: Product | null = null;
-  loadingProductId = false;
-  errorProductId: Error | null = null;
+  readonly categoriesMeta = new MetaModel();
 
   requestedPage = 1;
   readonly pageSize = 24;
@@ -32,12 +26,27 @@ export class CatalogStore {
     makeAutoObservable(this);
   }
 
+  get loadingProducts(): boolean {
+    return this.productsMeta.loading;
+  }
+
+  get errorProducts(): Error | null {
+    return this.productsMeta.error;
+  }
+
+  get loadingCategory(): boolean {
+    return this.categoriesMeta.loading;
+  }
+
+  get errorCategory(): Error | null {
+    return this.categoriesMeta.error;
+  }
+
   async loadProducts(query: LoadProductsQuery) {
     const myRequest = ++this.requestId;
 
     this.requestedPage = query.page;
-    this.loadingProducts = true;
-    this.errorProducts = null;
+    this.productsMeta.start();
 
     try {
       const res = await getProducts({
@@ -58,20 +67,19 @@ export class CatalogStore {
       if (myRequest !== this.requestId) return;
 
       runInAction(() => {
-        this.errorProducts = e instanceof Error ? e : new Error(String(e));
+        this.productsMeta.fail(e);
       });
     } finally {
       if (myRequest === this.requestId) {
         runInAction(() => {
-          this.loadingProducts = false;
+          this.productsMeta.finish();
         });
       }
     }
   }
 
   async loadCategories() {
-    this.loadingCategory = true;
-    this.errorCategory = null;
+    this.categoriesMeta.start();
     try {
       const res = await getProductCategories();
 
@@ -80,40 +88,11 @@ export class CatalogStore {
       });
     } catch (e) {
       runInAction(() => {
-        this.errorCategory = e instanceof Error ? e : new Error(String(e));
+        this.categoriesMeta.fail(e);
       });
     } finally {
       runInAction(() => {
-        this.loadingCategory = false;
-      });
-    }
-  }
-
-  async loadProduct(id: number | string | null | undefined) {
-    if (id === null || id === undefined || id === '') {
-      this.product = null;
-      this.errorProductId = null;
-      this.loadingProductId = false;
-      return;
-    }
-    this.loadingProductId = true;
-    this.errorProductId = null;
-
-    try {
-      const res = await getProduct(id, {
-        populate: ['images', 'productCategory'],
-      });
-
-      runInAction(() => {
-        this.product = res.data;
-      });
-    } catch (e) {
-      runInAction(() => {
-        this.errorProductId = e instanceof Error ? e : new Error(String(e));
-      });
-    } finally {
-      runInAction(() => {
-        this.loadingProductId = false;
+        this.categoriesMeta.finish();
       });
     }
   }
@@ -127,12 +106,16 @@ export class CatalogStore {
   }
 
   get categoryOptions() {
-    return this.categories.map((cat) => ({
-      key: String(cat.id),
-      value: cat.name ?? cat.slug ?? `Категория ${cat.id}`,
-    }));
+    return this.categories.map((cat) => {
+      const displayName =
+        (typeof cat.name === 'string' && cat.name.trim()) ||
+        (typeof cat.slug === 'string' && cat.slug.trim()) ||
+        `Категория ${cat.id}`;
+      return { key: String(cat.id), value: displayName };
+    });
+  }
+
+  getSelectedCategoryOptions(selectedIds: number[]) {
+    return this.categoryOptions.filter((opt) => selectedIds.includes(parseInt(opt.key, 10)));
   }
 }
-
-// один экземпляр на приложение
-export const catalogStore = new CatalogStore();

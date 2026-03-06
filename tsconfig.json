@@ -10,6 +10,7 @@
       "components/*": ["components/*"],
       "config/*": ["config/*"],
       "constants/*": ["constants/*"],
+      "lib/*": ["lib/*"],
       "pages/*": ["pages/*"],
       "store/*": ["store/*"],
       "styles/*": ["styles/*"],

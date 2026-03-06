@@ -1,5 +1,9 @@
 @use 'styles/variables' as *;
 
+.main {
+  width: 100%;
+}
+
 .emptySearch,
 .loadingWrap {
   display: flex;
@@ -7,19 +11,6 @@
   justify-content: center;
   min-height: 200px;
   width: 100%;
-}
-
-.skeletonList {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  align-items: stretch;
-  row-gap: 20px;
-  width: 100%;
-
-  @include md {
-    row-gap: 30px;
-  }
 }
 
 .mainContent {
@@ -42,4 +33,10 @@
   @include xl {
     padding: 0 100px;
   }
+}
+
+.paginationWrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

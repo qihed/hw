@@ -7,8 +7,10 @@ import type {
   ProductResponse,
   ProductCategoryResponse,
   ProductsResponse,
-  StrapiImage,
 } from 'api/types';
+import { normalizeProduct, type ProductApi } from 'api/normalizers/product';
+
+export const DEFAULT_PRODUCT_IMAGE = 'https://placehold.co/600x600';
 
 export type GetProductsParams = {
   page?: number;
@@ -51,20 +53,37 @@ export async function getProducts(params: GetProductsParams = {}): Promise<Produ
   );
 
   const { data } = await api.get<ProductsResponse>(`/products?${query}`);
-  return data;
+  return {
+    ...data,
+    data: data.data.map(normalizeProduct),
+  };
+}
+
+type RawCategory = ProductCategory & {
+  attributes?: { name?: string; slug?: string; [key: string]: unknown };
+};
+
+function normalizeCategory(raw: RawCategory): ProductCategory {
+  const name = raw.name ?? raw.attributes?.name ?? raw.slug ?? raw.attributes?.slug;
+  const slug = raw.slug ?? raw.attributes?.slug;
+  return {
+    ...raw,
+    name: name ?? undefined,
+    slug: slug ?? undefined,
+  };
 }
 
 export async function getProductCategories(): Promise<ProductCategoryResponse> {
-  const res = await api.get<{ data?: ProductCategory[] | { data?: ProductCategory[] } }>(
+  const res = await api.get<{ data?: RawCategory[] | { data?: RawCategory[] } }>(
     '/product-categories'
   );
   const raw = res.data;
-  const list = Array.isArray(raw)
+  const rawList = Array.isArray(raw)
     ? raw
-    : Array.isArray((raw as { data?: ProductCategory[] }).data)
-      ? (raw as { data: ProductCategory[] }).data
+    : Array.isArray((raw as { data?: RawCategory[] }).data)
+      ? (raw as { data: RawCategory[] }).data
       : [];
-  return { data: list };
+  return { data: rawList.map(normalizeCategory) };
 }
 
 export type GetProductParams = {
@@ -79,29 +98,25 @@ export async function getProduct(
   const query = qs.stringify({ populate }, { encode: false });
   const url = query ? `/products/${id}?${query}` : `/products/${id}`;
   const { data } = await api.get<ProductResponse>(url);
-  return data;
-}
-
-/** Проверка наличия ключа: для observable — has(), для обычных объектов — in */
-function hasKey(obj: object, key: string): boolean {
-  return isObservable(obj) ? has(obj, key) : key in obj;
+  return { data: normalizeProduct(data.data as ProductApi) };
 }
 
 export function getProductImageUrl(product: Product): string | undefined {
   const images = product.images;
-  if (Array.isArray(images) && images[0]) return images[0].url;
-  if (images && hasKey(images, 'data')) {
-    const data = (images as { data: StrapiImage[] }).data;
-    if (Array.isArray(data) && data[0]) return data[0].url;
-  }
-  return undefined;
+  return Array.isArray(images) && images[0] ? images[0].url : undefined;
+}
+
+function hasDataKey(obj: object): boolean {
+  return isObservable(obj) ? has(obj, 'data') : 'data' in obj;
 }
 
 export function getProductCategoryName(product: Product): string {
-  const cat = product.productCategory;
-  if (!cat) return '';
-  const data = hasKey(cat, 'data') ? cat.data : cat;
-  if (!data || typeof data !== 'object' || !hasKey(data, 'name')) return '';
-  const name = (data as { name?: unknown }).name;
-  return typeof name === 'string' ? name : '';
+  const catRaw = product.productCategory;
+  const cat: ProductCategory | undefined =
+    catRaw == null || typeof catRaw !== 'object'
+      ? undefined
+      : hasDataKey(catRaw as object)
+        ? (catRaw as { data: ProductCategory }).data
+        : (catRaw as ProductCategory);
+  return cat && typeof cat.name === 'string' ? cat.name : '';
 }

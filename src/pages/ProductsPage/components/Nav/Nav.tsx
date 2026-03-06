@@ -3,35 +3,16 @@ import { Link } from 'react-router';
 import styles from 'pages/ProductsPage/components/Nav/Nav.module.scss';
 import Text from 'components/Text';
 import rightArrow from 'assets/right-arrow.png';
-
-function getPageUrl(
-  page: number,
-  search: string = '',
-  category: string | null = null
-): string {
-  const params = new URLSearchParams();
-  params.set('page', String(page));
-  if (search.trim()) params.set('search', search.trim());
-  if (category?.trim()) params.set('category', category.trim());
-  const query = params.toString();
-  return query ? `/products?${query}` : '/products';
-}
+import { getProductsPageUrl } from 'lib/productsUrl';
 
 export type NavProps = {
   currentPage: number;
   pageCount: number;
-  /** Текущая строка поиска (для сохранения в URL при смене страницы) */
   searchQuery?: string;
-  /** Текущий параметр category в URL (например "1,4") */
   categoryParam?: string | null;
 };
 
-const Nav = ({
-  currentPage,
-  pageCount,
-  searchQuery = '',
-  categoryParam = null,
-}: NavProps) => {
+const Nav = ({ currentPage, pageCount, searchQuery = '', categoryParam = null }: NavProps) => {
   const prevPage = Math.max(1, currentPage - 1);
   const nextPage = Math.min(pageCount, currentPage + 1);
 
@@ -43,7 +24,8 @@ const Nav = ({
     return result;
   }, [pageCount]);
 
-  const toPageUrl = (page: number) => getPageUrl(page, searchQuery, categoryParam);
+  const toPageUrl = (page: number) =>
+    getProductsPageUrl({ page, search: searchQuery, category: categoryParam });
 
   return (
     <div className={styles.container}>
