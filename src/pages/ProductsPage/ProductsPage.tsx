@@ -1,43 +1,129 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
-import { useProducts } from 'api/useProducts';
 
-import styles from 'pages/ProductsPage/ProductsPage.module.scss';
-import 'styles/index.scss';
+import styles from './ProductsPage.module.scss';
 import Description from 'pages/ProductsPage/components/Description';
 import TechInfo from 'pages/ProductsPage/components/TechInfo';
 import ProductCardList from 'components/ProductCardList';
+import SkeletonCard from 'components/Skeleton';
+import Text from 'components/Text';
 import Nav from 'pages/ProductsPage/components/Nav';
 import Header from 'components/Header';
+import { useStore } from 'store/StoreContext';
+import { observer } from 'mobx-react-lite';
 
-const PAGE_SIZE = 24;
+function parseCategoryIds(param: string | null): number[] {
+  if (!param?.trim()) return [];
+  return param
+    .split(',')
+    .map((s) => parseInt(s.trim(), 10))
+    .filter((n) => !Number.isNaN(n));
+}
 
 const ProductsPage = () => {
-  const [searchParams] = useSearchParams();
+  const { catalog } = useStore();
+  const [searchParams, setSearchParams] = useSearchParams();
   const pageParam = searchParams.get('page');
+  const searchQuery = searchParams.get('search') ?? '';
+  const categoryParam = searchParams.get('category');
   const pageNumber = Math.max(1, parseInt(pageParam || '1', 10) || 1);
 
-  const { products, total, loading, error } = useProducts(pageNumber, PAGE_SIZE);
-  const pageCount = total > 0 ? Math.ceil(total / PAGE_SIZE) : 1;
-  const currentPage = Math.min(pageNumber, pageCount);
+  const categoryIds = useMemo(() => parseCategoryIds(categoryParam), [categoryParam]);
+  const isPageOutOfRange =
+    !catalog.loadingProducts && catalog.pageCount > 0 && pageNumber > catalog.pageCount;
+
+  useEffect(() => {
+    catalog.loadCategories();
+  }, [catalog]);
+
+  useEffect(() => {
+    catalog.loadProducts({
+      page: pageNumber,
+      search: searchQuery,
+      categoryIds,
+    });
+  }, [catalog, pageNumber, searchQuery, categoryIds]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pageParam]);
 
+  const applySearchParams = (updater: (next: URLSearchParams) => void) => {
+    const next = new URLSearchParams(searchParams);
+    updater(next);
+    next.set('page', '1');
+    setSearchParams(next);
+  };
+
+  const handleSearchSubmit = (value: string) => {
+    applySearchParams((next) => {
+      if (value.trim()) next.set('search', value.trim());
+      else next.delete('search');
+    });
+  };
+
+  const handleCategoryChange = (ids: number[]) => {
+    applySearchParams((next) => {
+      if (ids.length) next.set('category', ids.join(','));
+      else next.delete('category');
+    });
+  };
+
+  const handleClearSearch = () => {
+    applySearchParams((next) => next.delete('search'));
+  };
+
+  const handleClearCategory = () => {
+    applySearchParams((next) => next.delete('category'));
+  };
+
   return (
     <>
       <Header />
-      <main>
+      <main className={styles.main}>
         <Description />
-        <TechInfo total={total} loading={loading} />
+        <TechInfo
+          total={catalog.total}
+          loading={catalog.loadingProducts}
+          searchValue={searchQuery}
+          onSearchSubmit={handleSearchSubmit}
+          selectedCategoryIds={categoryIds}
+          onCategoryChange={handleCategoryChange}
+          onClearSearch={handleClearSearch}
+          onClearCategory={handleClearCategory}
+        />
         <div className={styles.mainContent}>
-          <ProductCardList products={products} loading={loading} error={error} />
+          {catalog.loadingProducts ? (
+            <div>
+              <SkeletonCard />
+            </div>
+          ) : isPageOutOfRange ? (
+            <div className={styles.emptySearch}>
+              <Text view="title">Такой страницы не существует</Text>
+            </div>
+          ) : catalog.products.length === 0 && (searchQuery.trim() || categoryIds.length > 0) ? (
+            <div className={styles.emptySearch}>
+              <Text view="title">По выбранным фильтрам товаров не найдено</Text>
+            </div>
+          ) : (
+            <ProductCardList
+              products={catalog.products}
+              loading={catalog.loadingProducts}
+              error={catalog.errorProducts}
+            />
+          )}
         </div>
-        <Nav currentPage={currentPage} pageCount={pageCount} />
+        <nav className={styles.paginationWrap} aria-label="Пагинация">
+          <Nav
+            currentPage={catalog.currentPage}
+            pageCount={catalog.pageCount}
+            searchQuery={searchQuery}
+            categoryParam={categoryParam}
+          />
+        </nav>
       </main>
     </>
   );
 };
 
-export default ProductsPage;
+export default observer(ProductsPage);

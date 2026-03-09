@@ -1,12 +1,10 @@
 import { Link } from 'react-router';
+import { observer } from 'mobx-react-lite';
 import styles from 'components/ProductCardList/ProductCardList.module.scss';
 import Card from 'components/Card';
-import Button from 'components/Button';
 import type { Product } from 'api/types';
-import { getProductImageUrl, getProductCategoryName } from 'api/products';
-
-const PLACEHOLDER_IMAGE =
-  'https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg';
+import { getProductImageUrl, getProductCategoryName, DEFAULT_PRODUCT_IMAGE } from 'api/products';
+import CartQuantityControl from 'components/CartQuantityControl';
 
 export type ProductCardListProps = {
   products: Product[];
@@ -41,12 +39,18 @@ const ProductCardList = ({ products, loading = false, error = null }: ProductCar
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
           <Card
-            image={getProductImageUrl(product) || PLACEHOLDER_IMAGE}
+            image={getProductImageUrl(product) || DEFAULT_PRODUCT_IMAGE}
             captionSlot={getProductCategoryName(product) || null}
             title={product.title}
             subtitle={product.description || '—'}
             contentSlot={<>{product.price}₽</>}
-            actionSlot={<Button>В корзину</Button>}
+            actionSlot={
+              <CartQuantityControl
+                productId={product.documentId}
+                stopLinkNavigation
+                addLabel="В корзину"
+              />
+            }
           />
         </Link>
       ))}
@@ -54,4 +58,4 @@ const ProductCardList = ({ products, loading = false, error = null }: ProductCar
   );
 };
 
-export default ProductCardList;
+export default observer(ProductCardList);

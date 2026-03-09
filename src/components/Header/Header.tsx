@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import Text from 'components/Text';
 import styles from 'components/Header/Header.module.scss';
 import logo from 'assets/logo.png';
@@ -21,7 +22,9 @@ const Header = () => {
         </Text>
       </div>
       <div className={styles.actionBtn}>
-        <img className={styles.bag} src={bag} alt="Bag items" />
+        <Link to="/cart" className={styles.bagLink} aria-label="Корзина">
+          <img className={styles.bag} src={bag} alt="Bag items" />
+        </Link>
         <img className={styles.user} src={user} alt="User profile" />
       </div>
     </header>

@@ -30,7 +30,10 @@
       "assets/*": ["src/assets/*"],
       "components/*": ["src/components/*"],
       "config/*": ["src/config/*"],
+      "constants/*": ["src/constants/*"],
+      "lib/*": ["src/lib/*"],
       "pages/*": ["src/pages/*"],
+      "store/*": ["src/store/*"],
       "styles/*": ["src/styles/*"],
       "utils/*": ["src/utils/*"]
     }

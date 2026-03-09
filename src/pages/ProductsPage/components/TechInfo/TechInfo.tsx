@@ -1,19 +1,52 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Input from 'components/Input';
 import Button from 'components/Button';
 import styles from 'pages/ProductsPage/components/TechInfo/TechInfo.module.scss';
-import MultiDropdown from 'components/MultiDropdown';
+import MultiDropdown, { type Option } from 'components/MultiDropdown';
 import Text from 'components/Text';
-import type { Option } from 'components/MultiDropdown';
+import { useStore } from 'store/StoreContext';
 
 export type TechInfoProps = {
   total?: number;
   loading?: boolean;
+  searchValue?: string;
+  onSearchSubmit?: (value: string) => void;
+  selectedCategoryIds?: number[];
+  onCategoryChange?: (ids: number[]) => void;
+  onClearSearch?: () => void;
+  onClearCategory?: () => void;
 };
 
-const TechInfo = ({ total = 0, loading = false }: TechInfoProps) => {
-  const [selectedCities, setSelectedCities] = useState<Option[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+const TechInfo = ({
+  total = 0,
+  loading = false,
+  searchValue = '',
+  onSearchSubmit,
+  selectedCategoryIds = [],
+  onCategoryChange,
+  onClearSearch,
+  onClearCategory,
+}: TechInfoProps) => {
+  const { catalog } = useStore();
+  const categoryOptions = catalog.categoryOptions;
+  const selectedCategoryOptions = catalog.getSelectedCategoryOptions(selectedCategoryIds);
+
+  const [searchQuery, setSearchQuery] = useState(searchValue);
+
+  useEffect(() => {
+    setSearchQuery(searchValue);
+  }, [searchValue]);
+
+  const handleSubmit = () => {
+    onSearchSubmit?.(searchQuery);
+  };
+
+  const handleCategoryChange = (options: Option[]) => {
+    onCategoryChange?.(options.map((o) => parseInt(o.key, 10)));
+  };
+
+  const hasSearch = Boolean(searchValue.trim());
+  const hasCategoryFilter = Boolean(selectedCategoryIds.length);
 
   return (
     <div className={styles.container}>
@@ -23,18 +56,33 @@ const TechInfo = ({ total = 0, loading = false }: TechInfoProps) => {
           placeholder="Search product"
           className={styles.input}
           onChange={setSearchQuery}
+          onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
         />
-        <Button>Find now</Button>
+        <Button type="button" onClick={handleSubmit}>
+          Find now
+        </Button>
+        {hasSearch && onClearSearch && (
+          <Button type="button" onClick={onClearSearch} className={styles.clearSearchBtn}>
+            Clear
+          </Button>
+        )}
       </div>
-      <MultiDropdown
-        className={styles.dropdown}
-        options={[]} /* дополнить вариантами для сортировки в последующих дз */
-        value={selectedCities}
-        onChange={setSelectedCities}
-        getTitle={(value) =>
-          value.length ? value.map((option) => option.value).join(', ') : 'Filter'
-        }
-      />
+      <div className={styles.filtersRow}>
+        <MultiDropdown
+          className={styles.dropdown}
+          options={categoryOptions}
+          value={selectedCategoryOptions}
+          onChange={handleCategoryChange}
+          getTitle={(value) =>
+            value.length ? value.map((option) => option.value).join(', ') : 'Filter'
+          }
+        />
+        {hasCategoryFilter && onClearCategory && (
+          <Button type="button" onClick={onClearCategory} className={styles.clearBtn}>
+            Clear
+          </Button>
+        )}
+      </div>
       <div className={styles.numFrame}>
         <Text className={styles.text}>Total products</Text>
         <Text className={styles.textNum} view="p-20">

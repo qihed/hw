@@ -54,3 +54,16 @@ export type ProductsResponse = {
 export type ProductResponse = {
   data: Product;
 };
+
+export type ProductCategoryResponse = {
+  data: ProductCategory[];
+};
+
+export type CartItem = {
+  productId: string;
+  quantity?: number;
+};
+
+export type Cart = {
+  data: CartItem[];
+};

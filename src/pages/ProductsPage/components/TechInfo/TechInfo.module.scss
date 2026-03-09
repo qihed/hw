@@ -45,8 +45,44 @@
   flex: 1;
 }
 
+.clearSearchBtn {
+  flex-shrink: 0;
+  background-color: #e04141;
+  color: #fff;
+  border: 1px solid #e04141;
+
+  &:hover {
+    background-color: #e65c5c;
+    border-color: #e65c5c;
+  }
+}
+
+.filtersRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-m;
+  width: 100%;
+
+  @include md {
+    gap: $space-l;
+  }
+}
+
 .dropdown {
   align-self: flex-start;
+}
+
+.clearBtn {
+  align-self: flex-start;
+  background-color: #e04141;
+  color: #fff;
+  border: 1px solid #e04141;
+
+  &:hover {
+    background-color: #e65c5c;
+    border-color: #e65c5c;
+  }
 }
 
 .numFrame {

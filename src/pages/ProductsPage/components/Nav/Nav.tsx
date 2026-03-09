@@ -3,17 +3,16 @@ import { Link } from 'react-router';
 import styles from 'pages/ProductsPage/components/Nav/Nav.module.scss';
 import Text from 'components/Text';
 import rightArrow from 'assets/right-arrow.png';
-
-function getPageUrl(page: number): string {
-  return `/products?page=${page}`;
-}
+import { getProductsPageUrl } from 'lib/productsUrl';
 
 export type NavProps = {
   currentPage: number;
   pageCount: number;
+  searchQuery?: string;
+  categoryParam?: string | null;
 };
 
-const Nav = ({ currentPage, pageCount }: NavProps) => {
+const Nav = ({ currentPage, pageCount, searchQuery = '', categoryParam = null }: NavProps) => {
   const prevPage = Math.max(1, currentPage - 1);
   const nextPage = Math.min(pageCount, currentPage + 1);
 
@@ -25,10 +24,13 @@ const Nav = ({ currentPage, pageCount }: NavProps) => {
     return result;
   }, [pageCount]);
 
+  const toPageUrl = (page: number) =>
+    getProductsPageUrl({ page, search: searchQuery, category: categoryParam });
+
   return (
     <div className={styles.container}>
       <Link
-        to={getPageUrl(prevPage)}
+        to={toPageUrl(prevPage)}
         className={currentPage <= 1 ? styles.disabled : undefined}
         aria-disabled={currentPage <= 1}
       >
@@ -37,7 +39,7 @@ const Nav = ({ currentPage, pageCount }: NavProps) => {
       {pages.map((page) => (
         <Link
           key={page}
-          to={getPageUrl(page)}
+          to={toPageUrl(page)}
           className={page === currentPage ? styles.linkActive : styles.link}
         >
           <Text
@@ -48,7 +50,7 @@ const Nav = ({ currentPage, pageCount }: NavProps) => {
         </Link>
       ))}
       <Link
-        to={getPageUrl(nextPage)}
+        to={toPageUrl(nextPage)}
         className={currentPage >= pageCount ? styles.disabled : undefined}
         aria-disabled={currentPage >= pageCount}
       >

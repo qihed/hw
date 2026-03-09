@@ -4,7 +4,6 @@ import CheckIcon from 'components/icons/CheckIcon';
 import styles from 'components/CheckBox/CheckBox.module.scss';
 
 export type CheckBoxProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
-  /** Вызывается при клике на чекбокс */
   onChange: (checked: boolean) => void;
 };
 

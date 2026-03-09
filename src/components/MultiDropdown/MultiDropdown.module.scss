@@ -1,10 +1,20 @@
 @use 'styles/variables' as *;
 
+.root {
+  position: relative;
+}
+
 .mddFrame {
-  width: 100%;
-  height: auto;
+  position: absolute;
+  top: calc(100% + #{$space-xxs});
+  left: 0;
+  min-width: 100%;
+  width: max-content;
+  max-height: 280px;
+  overflow-y: auto;
   background-color: $brand-white;
-  margin-top: $space-xxs;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
 }
 
 .mddFrameItem {
@@ -26,6 +36,26 @@
 
   &:checked {
     color: $brand;
+  }
+}
+
+.triggerWrap {
+  cursor: pointer;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.triggerWrapActive {
+  cursor: pointer;
+  width: 100%;
+  border: 1px solid $brand;
+  border-radius: 4px;
+
+  &:focus {
+    outline: none;
   }
 }
 

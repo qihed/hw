@@ -1,27 +1,20 @@
 import React from 'react';
+import cn from 'classnames';
 import Input from 'components/Input';
 import ArrowDownIcon from 'components/icons/ArrowDownIcon';
 import styles from 'components/MultiDropdown/MultiDropdown.module.scss';
 
 export type Option = {
-  /** Ключ варианта, используется для отправки на бек/использования в коде */
   key: string;
-  /** Значение варианта, отображается пользователю */
   value: string;
 };
 
-/** Пропсы, которые принимает компонент Dropdown */
 export type MultiDropdownProps = {
   className?: string;
-  /** Массив возможных вариантов для выбора */
   options: Option[];
-  /** Текущие выбранные значения поля, может быть пустым */
   value: Option[];
-  /** Callback, вызываемый при выборе варианта */
   onChange: (value: Option[]) => void;
-  /** Заблокирован ли дропдаун */
   disabled?: boolean;
-  /** Возвращает строку которая будет выводится в инпуте. В случае если опции не выбраны, строка должна отображаться как placeholder. */
   getTitle: (value: Option[]) => string;
 };
 
@@ -42,6 +35,7 @@ const MultiDropdown: React.FC<MultiDropdownProps> = ({
       if (!rootRef.current) return;
       if (!rootRef.current.contains(e.target as Node)) {
         setIsOpen(false);
+        setQuery('');
       }
     };
     document.addEventListener('mousedown', onDocClick);
@@ -61,22 +55,41 @@ const MultiDropdown: React.FC<MultiDropdownProps> = ({
   const filtered = options.filter((o) => o.value.toLowerCase().includes(query.toLowerCase()));
 
   const title = getTitle(value);
-  const inputValue = isOpen ? query : value.length ? title : '';
+  const selectedTitle = value.length ? title : '';
+  const inputValue = isOpen ? query || selectedTitle : selectedTitle;
+  const placeholder = value.length ? undefined : title || 'Filter';
+  const hasValue = value.length > 0;
 
   return (
-    <div className={className} ref={rootRef}>
-      <Input
-        value={inputValue}
-        afterSlot={<ArrowDownIcon color="secondary" />}
-        className={styles.borderStyle}
-        onChange={(val) => {
-          setQuery(val);
-          if (!isOpen) setIsOpen(true);
+    <div className={cn(styles.root, className)} ref={rootRef}>
+      <div
+        className={hasValue ? styles.triggerWrapActive : styles.triggerWrap}
+        onClick={(e) => {
+          if (disabled) return;
+          if (isOpen && (e.target as HTMLElement).closest('input')) return;
+          setIsOpen((prev) => {
+            if (prev) setQuery('');
+            return !prev;
+          });
         }}
-        placeholder={value.length ? '' : title}
-        disabled={disabled}
-        onClick={() => !disabled && setIsOpen(true)}
-      />
+        onKeyDown={(e) => e.key === 'Enter' && !disabled && setIsOpen((prev) => !prev)}
+        role="button"
+        tabIndex={disabled ? undefined : 0}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+      >
+        <Input
+          value={inputValue}
+          afterSlot={<ArrowDownIcon color="secondary" />}
+          className={styles.borderStyle}
+          onChange={(val) => {
+            setQuery(val);
+            if (!isOpen) setIsOpen(true);
+          }}
+          placeholder={placeholder}
+          disabled={disabled}
+        />
+      </div>
 
       {isOpen && !disabled && (
         <div className={styles.mddFrame}>
